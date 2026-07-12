@@ -170,8 +170,8 @@ function renderLists() {
 
   // experience timeline
   const timeline = $('#timeline');
-  DATA.experience.forEach(job => {
-    timeline.appendChild(el('div', { class: 'job', 'data-reveal': '' }, [
+  DATA.experience.forEach((job, idx) => {
+    timeline.appendChild(el('div', { class: 'job', 'data-reveal': '', style: `transition-delay:${idx * 0.09}s;` }, [
       el('div', { class: 'job-dot' }),
       el('div', { class: 'job-period', text: job.period }),
       el('div', { class: 'job-head' }, [
@@ -202,8 +202,8 @@ function renderLists() {
 
   // skills
   const skillGrid = $('#skill-grid');
-  DATA.skillGroups.forEach(grp => {
-    skillGrid.appendChild(el('div', { class: 'skill-group', 'data-reveal': '' }, [
+  DATA.skillGroups.forEach((grp, idx) => {
+    skillGrid.appendChild(el('div', { class: 'skill-group', 'data-reveal': '', style: `transition-delay:${idx * 0.08}s;` }, [
       el('div', { class: 'skill-group-title', text: grp.title }),
       el('div', { class: 'skill-tags' }, grp.items.map(sk => el('span', { text: sk }))),
     ]));
@@ -298,15 +298,33 @@ function wireModal() {
   });
 }
 
-/* ---------- cursor dot ---------- */
+/* ---------- cursor dot (lerped trailing) ---------- */
 function wireCursor() {
   const dot = $('#cursor-dot');
-  if (!dot || matchMedia('(pointer: coarse)').matches) return;
+  if (!dot || matchMedia('(pointer: coarse)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  let tx = window.innerWidth / 2, ty = window.innerHeight / 2;   // target
+  let cx = tx, cy = ty;                                          // current
+  let visible = false, running = false;
+  const half = () => (dot.offsetWidth || 16) / 2;
+
+  const loop = () => {
+    cx += (tx - cx) * 0.18;   // easing toward target = smooth trail
+    cy += (ty - cy) * 0.18;
+    dot.style.transform = `translate(${cx - half()}px, ${cy - half()}px)`;
+    running = Math.abs(tx - cx) > 0.1 || Math.abs(ty - cy) > 0.1;
+    if (running) requestAnimationFrame(loop);
+  };
+  const kick = () => { if (!running) { running = true; requestAnimationFrame(loop); } };
+
   window.addEventListener('mousemove', e => {
-    dot.style.transform = `translate(${e.clientX - 8}px, ${e.clientY - 8}px)`;
-    dot.style.opacity = '1';
+    tx = e.clientX; ty = e.clientY;
+    if (!visible) { visible = true; dot.style.opacity = '1'; }
+    kick();
   });
-  const grow = () => { dot.style.width = '40px'; dot.style.height = '40px'; dot.style.background = 'oklch(78% 0.13 85 / 0.85)'; };
+  document.addEventListener('mouseleave', () => { dot.style.opacity = '0'; visible = false; });
+
+  const grow = () => { dot.style.width = '44px'; dot.style.height = '44px'; dot.style.background = 'oklch(78% 0.13 85 / 0.85)'; };
   const shrink = () => { dot.style.width = '16px'; dot.style.height = '16px'; dot.style.background = 'oklch(58% 0.19 29)'; };
   // delegate so dynamically-added elements are covered
   document.addEventListener('mouseover', e => { if (e.target.closest('[data-cursor-hover]')) grow(); });
@@ -373,28 +391,37 @@ function wireHero() {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (heroEl && tiltEl && !reduced && !matchMedia('(pointer: coarse)').matches) {
-    heroEl.addEventListener('mousemove', e => {
-      const rect = heroEl.getBoundingClientRect();
-      const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      const ny = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+    let nx = 0, ny = 0, tilting = false;
+    const applyTilt = () => {
       tiltEl.style.transform = `rotateY(${nx * 5}deg) rotateX(${-ny * 5}deg)`;
       orbEls.forEach(o => {
         const depth = parseFloat(o.getAttribute('data-depth')) || 1;
         o.style.transform = `translate(${nx * depth * 12}px, ${ny * depth * 12}px)`;
       });
+      tilting = false;
+    };
+    heroEl.addEventListener('mousemove', e => {
+      const rect = heroEl.getBoundingClientRect();
+      nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      ny = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+      if (!tilting) { tilting = true; requestAnimationFrame(applyTilt); }
     });
   }
 
   if (heroEl && orbCol && !reduced) {
-    const onScroll = () => {
+    let ticking = false;
+    const render = () => {
       const h = heroEl.offsetHeight || 1;
       const p = Math.min(1, Math.max(0, window.scrollY / h));
       orbCol.style.transform = `translateY(${p * 40}px) scale(${1 + p * 0.15})`;
       orbCol.style.opacity = String(1 - p * 1.1);
       if (heroName) heroName.style.transform = `translateY(${-p * 30}px) scale(${1 + p * 0.05})`;
+      ticking = false;
     };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    window.addEventListener('scroll', () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(render); }
+    }, { passive: true });
+    render();
   }
 }
 
