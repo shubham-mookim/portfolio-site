@@ -1,0 +1,37 @@
+---
+/* The live axis readout. Depth below the waterline, altitude above it. */
+---
+<div class="readout" aria-hidden="true">
+  <span class="readout-num" id="ro-num">0<i>m</i></span>
+  <span class="readout-zone" id="ro-zone">Surface</span>
+</div>
+
+<script>
+  const ZONES = [
+    { to:  -0.62, name: 'Open sky' },
+    { to:  -0.30, name: 'Above water' },
+    { to:  -0.04, name: 'Sea level' },
+    { to:   0.04, name: 'The waterline' },
+    { to:   0.14, name: 'Epipelagic · sunlight' },
+    { to:   0.34, name: 'Mesopelagic · twilight' },
+    { to:   0.70, name: 'Bathypelagic · midnight' },
+    { to:   2.00, name: 'Abyssopelagic · the abyss' },
+  ];
+
+  function render(d) {
+    const num = document.getElementById('ro-num');
+    const zone = document.getElementById('ro-zone');
+    if (!num || !zone) return;
+    const metres = Math.round(d * 6000);
+    num.innerHTML =
+      metres === 0 ? `0<i>m</i>`
+      : metres > 0 ? `&minus;${metres.toLocaleString('en-US')}<i>m</i>`
+      : `+${Math.round(Math.abs(d) * 900).toLocaleString('en-US')}<i>m</i>`;
+    zone.textContent = (ZONES.find((z) => d <= z.to) || ZONES[ZONES.length - 1]).name;
+  }
+
+  document.addEventListener('axis', (e) => render(e.detail.depth));
+  document.addEventListener('astro:page-load', () =>
+    render(parseFloat(document.body.dataset.depth || '0'))
+  );
+</script>

@@ -1,0 +1,227 @@
+---
+import World from '../layouts/World.astro';
+import Negotiation from '../components/Negotiation.astro';
+import { projects } from '../data/projects';
+import { experience, education, honors, kit, principles } from '../data/experience';
+import { research } from '../data/research';
+import { me } from '../data/site';
+---
+
+<World
+  title="The Deep"
+  description="The professional work of Shubham Mookim — production AI systems, independent research, career and toolbox. One continuous descent."
+  world="below"
+  depth={0.06}
+  drift={0.92}
+>
+  <!-- ============ 0 · the way in ============ -->
+  <section class="page deep-open">
+    <div class="label" data-rise>The Deep &middot; keep going down</div>
+    <h1 class="page-title" data-rise style="--rd:70ms">
+      Everything below<br /><em>the line.</em>
+    </h1>
+    <p class="lede" data-rise style="--rd:150ms">
+      Six sections, one descent. The further you go the darker it gets — which is
+      roughly how the work goes too. Jump to any of them from the rail above, or
+      just keep scrolling.
+    </p>
+  </section>
+
+  <!-- ============ 1 · specimens ============ -->
+  <section class="band chapter-band" id="specimens">
+    <div class="chapter-mark" data-rise>
+      <span class="chapter-no">01</span>
+      <span class="chapter-depth">&minus;900 m &rarr; &minus;3,800 m</span>
+    </div>
+    <h2 class="chapter" data-rise style="--rd:60ms">
+      Six systems,<br /><em>still running.</em>
+    </h2>
+    <p class="lede" data-rise style="--rd:120ms">
+      Everything here went to production and stayed there. Each one opens into what
+      the actual problem was, and the decisions that survived contact with it.
+    </p>
+
+    <div class="specimens" style="margin-top:38px">
+      {projects.map((p, i) => (
+        <a class="specimen" href={`/work/${p.slug}/`} data-rise style={`--rd:${(i % 3) * 100}ms`}>
+          <div class="sp-top">
+            <span class="st">{p.status}</span>
+            <span>{p.depth}</span>
+          </div>
+          <h3>{p.name}</h3>
+          <p>{p.blurb}</p>
+          <div class="metric"><b>{p.metric}</b><span>{p.metricLabel}</span></div>
+          <span class="more">→</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ 2 · research ============ -->
+  <section class="band chapter-band" id="research">
+    <div class="chapter-mark" data-rise>
+      <span class="chapter-no">02</span>
+      <span class="chapter-depth">open questions</span>
+    </div>
+    <h2 class="chapter" data-rise style="--rd:60ms">
+      Work done to answer<br /><em>a question.</em>
+    </h2>
+    <p class="lede" data-rise style="--rd:120ms">
+      Separate from the systems above: here the goal is to find out whether something
+      is true, and to publish it even when the answer undercuts the reason I started.
+    </p>
+
+    <div class="research-list">
+      {research.map((r, i) => (
+        <a class="research-row" href={`/research/${r.slug}/`} data-rise style={`--rd:${i * 90}ms`}>
+          <span class="rr-when">{r.status} &middot; {r.when}</span>
+          <span class="rr-body">
+            <h3>{r.title}</h3>
+            <span class="rr-ask"><em>{r.question}</em> {r.answer}</span>
+          </span>
+          <span class="rr-go">→</span>
+        </a>
+      ))}
+    </div>
+
+    <div class="sim-wrap" data-rise>
+      <Negotiation />
+    </div>
+  </section>
+
+  <!-- ============ 3 · descent ============ -->
+  <section class="band chapter-band" id="descent">
+    <div class="chapter-mark" data-rise>
+      <span class="chapter-no">03</span>
+      <span class="chapter-depth">&minus;200 m &rarr; &minus;3,800 m</span>
+    </div>
+    <h2 class="chapter" data-rise style="--rd:60ms">
+      Four years,<br /><em>getting deeper.</em>
+    </h2>
+
+    <div class="split" style="margin-top:34px">
+      <figure class="frame portrait" data-rise>
+        <img
+          src="/photos/portrait-wide.webp"
+          alt="Shubham Mookim standing on a bridge over an Amsterdam canal"
+          width="1500" height="1000" loading="lazy" decoding="async"
+        />
+        <figcaption><span>{me.name}</span><span>Bengaluru</span></figcaption>
+      </figure>
+
+      <div>
+        <p data-rise>
+          B.Tech in Electronics &amp; Communications with a minor in Computer Science
+          from <strong>PES University</strong>. Since January 2025 I have been a core
+          engineer at <strong>ForGood.ai</strong>, where context allocation, multi-agent
+          reasoning and retrieval are treated as research questions first — and then
+          owned in production inside GeneSilico, a precision-oncology platform.
+        </p>
+        <p data-rise style="--rd:90ms">
+          Every stop went further from the demo and closer to the thing that has to
+          keep working while you are asleep.
+        </p>
+      </div>
+    </div>
+
+    <div class="descent" style="margin-top:44px">
+      {experience.map((x) => (
+        <div class="stop">
+          <div class="when"><span>{x.when}</span><b>{x.depth}</b></div>
+          <h3>{x.role}</h3>
+          <div class="where">{x.where}</div>
+          <p>{x.desc}</p>
+          <div class="tags">{x.tags.map((t) => <span>{t}</span>)}</div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ 4 · toolbox ============ -->
+  <section class="band chapter-band" id="toolbox">
+    <div class="chapter-mark" data-rise>
+      <span class="chapter-no">04</span>
+      <span class="chapter-depth">how the work gets done</span>
+    </div>
+    <h2 class="chapter" data-rise style="--rd:60ms">
+      A list of tools<br /><em>explains nothing.</em>
+    </h2>
+    <p class="lede" data-rise style="--rd:120ms">
+      So here are both: the four rules that decide how I build, and what I reach for.
+    </p>
+
+    <div class="principles" style="margin-top:36px">
+      {principles.map((x, i) => (
+        <div data-rise style={`--rd:${(i % 2) * 100}ms`}>
+          <div class="n">{x.n}</div>
+          <h4>{x.head}</h4>
+          <p>{x.body}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="kit" style="margin-top:46px">
+      {kit.map((g, i) => (
+        <div data-rise style={`--rd:${i * 70}ms`}>
+          <h4>{g.title}</h4>
+          <ul>{g.items.map((t) => <li>{t}</li>)}</ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ 5 · record ============ -->
+  <section class="band chapter-band" id="record">
+    <div class="chapter-mark" data-rise>
+      <span class="chapter-no">05</span>
+      <span class="chapter-depth">the paperwork</span>
+    </div>
+    <h2 class="chapter" data-rise style="--rd:60ms">
+      Where it<br /><em>started.</em>
+    </h2>
+
+    <div class="two-col" style="margin-top:34px">
+      <div>
+        <div class="label" data-rise>Education</div>
+        {education.map((x) => (
+          <div class="entry" data-rise>
+            <div class="when">{x.when}</div>
+            <h4>{x.title}</h4>
+            <p>{x.detail}</p>
+          </div>
+        ))}
+      </div>
+      <div>
+        <div class="label" data-rise>Honors</div>
+        {honors.map((x) => (
+          <div class="entry" data-rise>
+            <div class="when">{x.when}</div>
+            <h4>{x.title}</h4>
+            <p>{x.detail}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6 · abyss ============ -->
+  <section class="band chapter-band floor" id="abyss">
+    <div class="chapter-mark centred" data-rise>
+      <span class="chapter-no">06</span>
+      <span class="chapter-depth">&minus;6,000 m &middot; the bottom</span>
+    </div>
+    <h2 class="display" data-rise style="--rd:70ms">
+      It gets quiet<br />down here. <em>Say something.</em>
+    </h2>
+    <a class="mail" href={`mailto:${me.email}`} data-rise style="--rd:160ms">{me.email}</a>
+    <div class="meta" data-rise style="--rd:230ms">
+      <span>{me.city}</span>
+      <a href={me.linkedin} target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href={me.github} target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+    <p class="floor-note" data-rise>
+      Open to hard problems in AI systems, health tech, and anything where being
+      wrong actually costs something.
+    </p>
+  </section>
+</World>

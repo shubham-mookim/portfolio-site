@@ -1,0 +1,77 @@
+---
+import World from '../layouts/World.astro';
+
+const specs = [
+  { k: 'The world', v: 'One WebGL fragment shader draws every page — sky, a rolling horizon, caustics, light shafts, marine snow. It takes a single signed uniform: −1 is high above water, 0 is the waterline, +1 is the abyss. The professional/personal switch, and the home page\'s two-way scroll, just animate that number.' },
+  { k: 'Persistence', v: 'The canvas survives navigation. Astro view transitions keep the same WebGL context alive between pages, so the horizon travels instead of restarting.' },
+  { k: 'Framework', v: 'Astro, static output. Zero client JavaScript except the shader, the negotiation model on the research page, and a couple of IntersectionObservers.' },
+  { k: 'The live model', v: 'The bilateral market on /research is a real simulation running in your browser — nine agents, three tiers, an alternating-offer bargain per round. It is the mechanism behind the research, not a recording of it.' },
+  { k: 'Type', v: 'Instrument Serif for anything with a feeling in it, DM Sans for reading, DM Mono for numbers and coordinates.' },
+  { k: 'Photographs', v: 'Mine. Paris, Amsterdam and London, autumn 2025 — resized and served as WebP, about 1.2 MB for the lot.' },
+  { k: 'Build', v: 'GitHub Actions builds on every push to main and commits the output to a live branch.' },
+];
+---
+
+<World
+  title="Colophon"
+  description="How this site is built and hosted — a WebGL shader, Astro, and an old Android phone running Termux."
+  world="surface"
+  depth={0.05}
+  drift={0.2}
+>
+  <section class="page">
+    <div class="label" data-rise>Colophon &middot; how this is made</div>
+    <h1 class="page-title" data-rise style="--rd:70ms">
+      This site is served<br /><em>from a phone.</em>
+    </h1>
+    <p class="lede" data-rise style="--rd:150ms">
+      Not a metaphor. An old Android handset on my desk, running a terminal, serving these
+      bytes to you right now.
+    </p>
+  </section>
+
+  <section class="band">
+    <div class="split">
+      <div data-rise><div class="label">The host</div></div>
+      <div>
+        <p data-rise>
+          The phone runs <strong>Termux</strong>, which gives it a real Linux shell. Inside that,
+          a dependency-free Node static server binds to <code>127.0.0.1</code> only — nothing is
+          exposed on the network — and a <strong>Cloudflare tunnel</strong> makes an outbound
+          connection to publish it. No ports opened on the router, no inbound holes, no cloud bill.
+        </p>
+        <p data-rise style="--rd:90ms">
+          Deploys are pull-based, because a GitHub runner cannot reach a phone behind home NAT.
+          I push to GitHub, Actions builds the site, and the phone runs one script that pulls the
+          built output and restarts the tunnels. The phone never runs a build — it stays a very
+          simple file server, which is the only reason this is reliable.
+        </p>
+        <p data-rise style="--rd:160ms">
+          The whole control layer is about two hundred lines of shell and one Node file. It serves
+          several sites at once from a manifest; adding another is one line.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band tight">
+    <div class="label" data-rise>Specification</div>
+    <div class="spec-list">
+      {specs.map((s, i) => (
+        <div class="spec-row" data-rise style={`--rd:${i * 55}ms`}>
+          <div class="k">{s.k}</div>
+          <p>{s.v}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="band tight">
+    <p class="lede" data-rise>
+      If you got this far you are the kind of person I would enjoy hearing from.
+    </p>
+    <p style="margin-top:18px">
+      <a class="link" href="/abyss/">Say hello <span>→</span></a>
+    </p>
+  </section>
+</World>

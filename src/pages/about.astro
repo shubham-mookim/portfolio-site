@@ -1,0 +1,112 @@
+---
+import World from '../layouts/World.astro';
+import { me } from '../data/site';
+
+const shape = [
+  { k: 'From', v: 'Bengaluru. Still here, and increasingly deliberate about that.' },
+  { k: 'Studied', v: 'Electronics & Communications at PES University, with a minor in Computer Science. I came to software through signals and circuits rather than through a machine-learning course.' },
+  { k: 'Work', v: 'Research engineer on AI systems at ForGood.ai, building the intelligence layer of a precision-oncology platform.' },
+  { k: 'Languages', v: 'English and Hindi fluently, Kannada badly enough that people switch back to English out of kindness.' },
+  { k: 'Offline', v: 'A guitar, a cricket bat, and a long list of films I keep meaning to rewatch.' },
+];
+
+const things = [
+  { h: 'Guitar',
+    p: 'Badly, loudly, and mostly the same handful of songs. It is the only thing I do where being wrong has no consequence whatsoever, which after a week of writing software for cancer care is precisely the point.' },
+  { h: 'Cricket',
+    p: 'I once spent a summer teaching a computer to watch cricket, which did not make me any better at playing it. I still watch more of it than I will admit in a job interview.' },
+  { h: 'Taking things apart',
+    p: 'The electronics degree left me with a habit of wanting to know what is underneath. It is why I end up owning the caching layer and the deploy script rather than only the feature.' },
+  { h: 'Photographs',
+    p: 'I am not a photographer. I just like standing somewhere long enough to work out why it looks the way it does, and a camera is a good excuse to keep standing there.' },
+  { h: 'Films',
+    p: 'I watch a lot of them. Not in a listing-my-top-ten way — I just like sitting with something for two hours that was made deliberately, frame by frame, by people who cared about it more than was strictly necessary.' },
+];
+---
+
+<World
+  title="Portrait"
+  description="Who Shubham Mookim is away from the CV — Bengaluru, guitar, cricket, and a habit of taking things apart."
+  world="above"
+  depth={-0.3}
+  drift={0.1}
+>
+  <section class="page">
+    <div class="label" data-rise>Portrait &middot; above the waterline</div>
+    <h1 class="page-title" data-rise style="--rd:70ms">
+      The half that doesn't<br /><em>fit on a CV.</em>
+    </h1>
+    <p class="lede" data-rise style="--rd:150ms">
+      I spend most of my working life inside problems that have no horizon in them.
+      This page is the rest.
+    </p>
+  </section>
+
+  <section class="band">
+    <div class="split">
+      <figure class="frame" data-rise>
+        <img
+          src="/photos/portrait.webp"
+          alt="Shubham Mookim standing on a bridge over an Amsterdam canal"
+          width="1000" height="1250" loading="eager" decoding="async"
+        />
+        <figcaption><span>{me.name}</span><span>{me.city}</span></figcaption>
+      </figure>
+
+      <div>
+        <h2 class="chapter" data-rise>
+          I got here through hardware,<br /><em>which explains a lot.</em>
+        </h2>
+        <p data-rise style="--rd:70ms">
+          My degree was electronics — signals, circuits, the physical layer. I ended up
+          writing AI systems anyway, but the habit stuck: when something misbehaves I want
+          to go one level down rather than one level of abstraction up.
+        </p>
+        <p data-rise style="--rd:130ms">
+          That is probably why the parts of this job I like best are the unglamorous ones.
+          What gets cached. What gets dropped when the window is full. What happens when
+          the input is a photograph of a fax. Nobody writes papers about any of it, and it
+          is the difference between a demo and something a clinician can lean on.
+        </p>
+        <p data-rise style="--rd:190ms">
+          The rest of me is fairly simple. I like being outdoors more than I manage to be,
+          I travel when I can afford the time, and I have an unreasonable fondness for
+          infrastructure that has been quietly working for a very long time.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band tight">
+    <div class="label" data-rise>The short version</div>
+    <div class="now-list">
+      {shape.map((s, i) => (
+        <div class="now-row" data-rise style={`--rd:${i * 55}ms`}>
+          <div class="k">{s.k}</div>
+          <p>{s.v}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="band tight">
+    <div class="label" data-rise>Off duty</div>
+    <div class="offduty">
+      {things.map((t, i) => (
+        <div data-rise style={`--rd:${i * 80}ms`}>
+          <h4>{t.h}</h4>
+          <p>{t.p}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="band tight">
+    <p class="lede" data-rise>
+      There is also a fair amount of travel. That has its own place.
+    </p>
+    <p style="margin-top:16px">
+      <a class="link" href="/atlas/">Open the atlas <span>→</span></a>
+    </p>
+  </section>
+</World>

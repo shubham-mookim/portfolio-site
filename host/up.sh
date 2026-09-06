@@ -30,13 +30,21 @@ while read -r name source port expose subdir _rest || [ -n "${name:-}" ]; do
   if [ "$source" = "self" ]; then
     sitedir="$REPO_ROOT/$subdir"
   else
+    # a source may pin a branch as  <git-url>#<branch>  (default: the repo default)
+    case "$source" in
+      *'#'*) url="${source%%#*}"; branch="${source##*#}" ;;
+      *)     url="$source";       branch="" ;;
+    esac
     repodir="$SITES/$name"
     if [ -d "$repodir/.git" ]; then
-      echo "  - $name: git pull"
-      git -C "$repodir" pull --ff-only || echo "    (pull failed — serving existing checkout)"
+      echo "  - $name: git pull${branch:+ ($branch)}"
+      git -C "$repodir" fetch --depth 1 origin ${branch:+"$branch"} >/dev/null 2>&1 || true
+      git -C "$repodir" reset --hard "origin/${branch:-HEAD}" >/dev/null 2>&1 \
+        || git -C "$repodir" pull --ff-only \
+        || echo "    (pull failed — serving existing checkout)"
     else
-      echo "  - $name: git clone"
-      git clone --depth 1 "$source" "$repodir"
+      echo "  - $name: git clone${branch:+ ($branch)}"
+      git clone --depth 1 ${branch:+--branch "$branch"} "$url" "$repodir"
     fi
     sitedir="$repodir/$subdir"
   fi
@@ -45,7 +53,7 @@ while read -r name source port expose subdir _rest || [ -n "${name:-}" ]; do
     echo "    ! no index.html in $sitedir — skipping $name"; continue
   fi
 
-  node "$SCRIPT_DIR/serve.js" "$sitedir" "$port" >"$LOGS/$name.server.log" 2>&1 &
+  node "$SCRIPT_DIR/serve.cjs" "$sitedir" "$port" >"$LOGS/$name.server.log" 2>&1 &
   echo $! >"$RUN/$name.server.pid"
   echo "    $name -> 127.0.0.1:$port ($expose)"
 

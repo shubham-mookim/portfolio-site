@@ -10,7 +10,7 @@ adding a new site is a one-line change.
 ~/srv/
   portfolio/           this repo (the control layer lives in host/)
     host/
-      serve.js         one secure static server (serves any folder)
+      serve.cjs         one secure static server (serves any folder)
       sites.conf       the manifest — list every site here
       up.sh            pull + serve + tunnel everything, print URLs
       down.sh          stop everything
@@ -21,6 +21,15 @@ adding a new site is a one-line change.
 
 `host/run/` (pids, current URLs) and `host/logs/` are generated at runtime and
 git-ignored.
+
+## How the portfolio gets here
+
+The site is an Astro project. **GitHub Actions builds it** on every push to
+`main` and publishes the finished HTML to the `live` branch; the phone pulls
+`live` and serves it. The phone never runs `npm` — it stays a plain file
+server, which is the only reason this is dependable on old hardware.
+
+A `source` in `sites.conf` may pin a branch with `<git-url>#<branch>`.
 
 ## First-time setup (or after a phone reboot)
 
@@ -64,6 +73,9 @@ tail -f host/logs/portfolio.tunnel.log   # watch a specific tunnel
   firewall holes.
 - The server serves only its site folder, and refuses `../` traversal and
   dotfiles (so `.git` and friends can never be fetched).
+- Extensionless paths redirect to their canonical `/dir/` form, a site's own
+  `404.html` is served for misses, and fingerprinted build assets under
+  `_astro/` and `photos/` get long-lived cache headers.
 
 ## Caveats and the next step
 

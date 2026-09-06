@@ -1,0 +1,16 @@
+---
+import World from '../layouts/World.astro';
+---
+
+<World title="Off the map" description="This page is not on the map." world="below" depth={0.98} drift={0}>
+  <section class="lost">
+    <div class="label">&minus;6,000 m &middot; no signal</div>
+    <h1 class="display">You have drifted<br /><em>off the map.</em></h1>
+    <p class="lede" style="margin-top:24px">
+      There is nothing at this depth. Nothing down here has eyes either, so no one saw.
+    </p>
+    <p style="margin-top:30px">
+      <a class="link" href="/">Back to the surface <span>→</span></a>
+    </p>
+  </section>
+</World>

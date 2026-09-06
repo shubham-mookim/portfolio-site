@@ -1,0 +1,73 @@
+---
+import World from '../../layouts/World.astro';
+import { places } from '../../data/places';
+
+export function getStaticPaths() {
+  return places.map((pl, i) => ({
+    params: { slug: pl.slug },
+    props: {
+      pl,
+      prev: places[(i - 1 + places.length) % places.length],
+      next: places[(i + 1) % places.length],
+    },
+  }));
+}
+
+const { pl, prev, next } = Astro.props;
+---
+
+<World
+  title={pl.city}
+  description={`${pl.city}, ${pl.country} — ${pl.lede}`}
+  world="above"
+  depth={-0.4}
+  drift={0.12}
+>
+  <section class="page">
+    <div class="label" data-rise>{pl.country} &middot; {pl.when} &middot; {pl.coords}</div>
+    <h1 class="page-title" data-rise style="--rd:70ms">{pl.city}</h1>
+    <p class="lede" data-rise style="--rd:150ms">{pl.lede}</p>
+  </section>
+
+  <div class:list={['bleed', pl.hero.orient]} data-rise>
+    <img
+      src={pl.hero.src} alt={pl.hero.alt}
+      style={pl.hero.focal ? `object-position:${pl.hero.focal}` : undefined}
+      width="1800" height="1200" loading="eager" decoding="async"
+    />
+    <span class="cap">{pl.hero.caption} &middot; {pl.hero.meta}</span>
+  </div>
+
+  <section class="band">
+    <div class="two-col">
+      {pl.body.map((b, i) => (
+        <div data-rise style={`--rd:${i * 90}ms`}>
+          <h3>{b.head}</h3>
+          <p>{b.text}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="band tight">
+    <div class="label" data-rise>The rest of the roll</div>
+    <div class="strip">
+      {pl.frames.map((f, i) => (
+        <figure data-rise style={`--rd:${(i % 4) * 90}ms`}>
+          <img
+            src={f.src} alt={f.alt}
+            style={f.focal ? `object-position:${f.focal}` : undefined}
+            width="900" height="1200" loading="lazy" decoding="async"
+          />
+          <figcaption>{f.caption} &middot; {f.meta}</figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <nav class="pager">
+    <a href={`/atlas/${prev.slug}/`}>← {prev.city}</a>
+    <a href="/atlas/">The whole atlas</a>
+    <a href={`/atlas/${next.slug}/`}>{next.city} →</a>
+  </nav>
+</World>

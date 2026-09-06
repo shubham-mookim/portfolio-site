@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* Minimal, dependency-free static file server. Serves ONE directory.
  *
- *   node serve.js <dir> [port]
+ *   node serve.cjs <dir> [port]
  *
  * Security posture (intentional):
  *   - Binds to 127.0.0.1 only — never exposed on the LAN; only a local
@@ -30,6 +30,17 @@ const TYPES = {
   '.map': 'application/json; charset=utf-8', '.mp4': 'video/mp4', '.webm': 'video/webm',
 };
 
+/* Serve the site's own 404 page when it has one. */
+function notFound(req, res) {
+  const custom = path.join(ROOT, '404.html');
+  fs.readFile(custom, (err, buf) => {
+    res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8',
+                         'X-Content-Type-Options': 'nosniff' });
+    if (req.method === 'HEAD') return res.end();
+    res.end(err ? '<h1>404 — Not found</h1>' : buf);
+  });
+}
+
 const server = http.createServer((req, res) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     res.writeHead(405, { 'Content-Type': 'text/plain' });
@@ -43,6 +54,14 @@ const server = http.createServer((req, res) => {
   if (pathname.split('/').some(seg => seg.startsWith('.') && seg.length)) {
     res.writeHead(403); return res.end('Forbidden');
   }
+  // extensionless path without a trailing slash -> redirect to the canonical form,
+  // so directory-style builds (/work/) work when someone types /work
+  if (!pathname.endsWith('/') && !path.extname(pathname)) {
+    if (fs.existsSync(path.join(ROOT, pathname, 'index.html'))) {
+      res.writeHead(301, { Location: pathname + '/' });
+      return res.end();
+    }
+  }
   if (pathname.endsWith('/')) pathname += 'index.html';
 
   const filePath = path.join(ROOT, pathname);
@@ -51,13 +70,12 @@ const server = http.createServer((req, res) => {
   }
 
   fs.stat(filePath, (err, st) => {
-    if (err || !st.isFile()) {
-      res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
-      return res.end('<h1>404 — Not found</h1>');
-    }
+    if (err || !st.isFile()) return notFound(req, res);
+    // fingerprinted build assets can be cached hard; everything else stays fresh
+    const immutable = /^\/(_astro|photos)\//.test(pathname);
     res.writeHead(200, {
       'Content-Type': TYPES[path.extname(filePath).toLowerCase()] || 'application/octet-stream',
-      'Cache-Control': 'no-cache',
+      'Cache-Control': immutable ? 'public, max-age=31536000, immutable' : 'no-cache',
       'X-Content-Type-Options': 'nosniff',
     });
     if (req.method === 'HEAD') return res.end();

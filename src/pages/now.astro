@@ -1,0 +1,48 @@
+---
+import World from '../layouts/World.astro';
+
+/* A now page: what is true this month. Edit this and the date together. */
+const updated = 'September 2026';
+
+const rows = [
+  { k: 'Building', v: 'Context architecture for Patient OS at ForGood.ai — mostly the question of what a system should be allowed to forget.' },
+  { k: 'Researching', v: 'Agent Compute Negotiation: whether smarter agents actually make a decentralised market better. So far the answer is an uncomfortable no.' },
+  { k: 'Thinking about', v: 'Retrieval that exercises restraint. Almost every agent failure I have debugged was too much context, not too little.' },
+  { k: 'Reading', v: 'Papers on long-horizon agent memory, and whatever falls out of the ML feeds on a given week.' },
+  { k: 'Playing', v: 'The same four songs on guitar. Progress is not the goal.' },
+  { k: 'Where', v: 'Bengaluru. Open to interesting problems and interesting conversations.' },
+  { k: 'This site', v: 'Served from an old Android phone on my desk. There is a whole page about that.' },
+];
+---
+
+<World
+  title="Now"
+  description="What Shubham Mookim is working on, reading and thinking about this month."
+  world="above"
+  depth={-0.16}
+  drift={0.12}
+>
+  <section class="page">
+    <div class="label" data-rise>Now &middot; updated {updated}</div>
+    <h1 class="page-title" data-rise style="--rd:70ms">
+      What's true<br /><em>this month.</em>
+    </h1>
+    <p class="lede" data-rise style="--rd:150ms">
+      A page that goes stale on purpose, so you can tell whether anyone is home.
+    </p>
+  </section>
+
+  <section class="band">
+    <div class="now-list">
+      {rows.map((r, i) => (
+        <div class="now-row" data-rise style={`--rd:${i * 60}ms`}>
+          <div class="k">{r.k}</div>
+          <p>{r.v}</p>
+        </div>
+      ))}
+    </div>
+    <p style="margin-top:32px">
+      <a class="link" href="/colophon/">How this site is made <span>→</span></a>
+    </p>
+  </section>
+</World>

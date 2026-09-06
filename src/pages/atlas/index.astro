@@ -1,0 +1,62 @@
+---
+import World from '../../layouts/World.astro';
+import { trips, placesByTrip } from '../../data/places';
+---
+
+<World
+  title="Atlas"
+  description="Places Shubham Mookim has been — Türkiye in 2024, Europe in 2025. Photographs and notes."
+  world="above"
+  depth={-0.36}
+  drift={0.1}
+>
+  <section class="page">
+    <div class="label" data-rise>Atlas &middot; where I have been</div>
+    <h1 class="page-title" data-rise style="--rd:70ms">
+      A map made of<br /><em>small astonishments.</em>
+    </h1>
+    <p class="lede" data-rise style="--rd:150ms">
+      Two trips, six cities. Not a camera roll — the handful of frames I would
+      actually stand behind, and what I was thinking while I stood there.
+    </p>
+  </section>
+
+  {trips.map((t) => (
+    <section class="band">
+      <div class="trip-head" data-rise>
+        <h2 class="chapter" style="margin:0">{t.name}</h2>
+        <span class="trip-when">{t.when}</span>
+      </div>
+      <p class="lede" data-rise style="--rd:70ms">{t.note}</p>
+
+      <div class="atlas-grid" style="margin-top:34px">
+        {placesByTrip(t.id).map((pl, i) => (
+          <a class="atlas-card" href={`/atlas/${pl.slug}/`} data-rise style={`--rd:${i * 90}ms`}>
+            <img
+              src={pl.hero.src} alt={pl.hero.alt}
+              style={pl.hero.focal ? `object-position:${pl.hero.focal}` : undefined}
+              width="1200" height="1500" loading="lazy" decoding="async"
+            />
+            <span class="scrim"></span>
+            <span class="meta">
+              <span class="co">{pl.coords} &middot; {pl.altitude}</span>
+              <h3>{pl.city}</h3>
+            </span>
+          </a>
+        ))}
+      </div>
+    </section>
+  ))}
+
+  <section class="band tight">
+    <div class="split">
+      <div data-rise><div class="label">Why bother</div></div>
+      <p class="lede" data-rise style="--rd:80ms">
+        Travelling is the correction. A week of being somewhere I have no expertise,
+        no context and no useful opinions resets what a hard problem actually feels
+        like. It is the only reliable way I have found to stop mistaking familiarity
+        for understanding.
+      </p>
+    </div>
+  </section>
+</World>

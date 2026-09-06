@@ -1,0 +1,93 @@
+---
+import { below, above } from '../data/site';
+
+export interface Props { world: 'below' | 'above' | 'surface'; }
+const { world } = Astro.props;
+
+const here = Astro.url.pathname;
+const active = world === 'above' ? above : below;
+
+/* Only the personal side can resolve its active link on the server — the deep
+   is one page, so its active section is decided by the scroll-spy below. */
+const isOn = (href: string) => world === 'above' && here === href;
+---
+
+<header class="axis">
+  <a class="mark" href="/" aria-label="Home — the waterline">
+    <svg viewBox="0 0 34 18" aria-hidden="true"><path d="M1 11c4-4 6.5 4 10.5 0S22 7 26 11s5.5-1 7-3" /></svg>
+    <b>SM</b>
+  </a>
+
+  <!-- the waterline: one switch, two worlds -->
+  <div class="toggle" data-pos={world} role="group" aria-label="Switch between professional and personal">
+    <span class="tog-knob" aria-hidden="true"></span>
+    <a
+      href={below.home}
+      class:list={['tog', { on: world === 'below' }]}
+      aria-current={world === 'below' ? 'true' : undefined}
+    >
+      <i>↓</i><span>{below.tag}</span>
+    </a>
+    <a
+      href={above.home}
+      class:list={['tog', 'warm', { on: world === 'above' }]}
+      aria-current={world === 'above' ? 'true' : undefined}
+    >
+      <span>{above.tag}</span><i>↑</i>
+    </a>
+  </div>
+
+  <a class="axis-say" href={world === 'above' ? '/about/' : '/deep/#abyss'}>Say hello</a>
+</header>
+
+{world !== 'surface' && (
+  <nav class="sections" aria-label={`${active.name} sections`}>
+    <span class="sections-world">{active.name}</span>
+    <ul>
+      {active.sections.map((s) => (
+        <li>
+          <a href={s.href} data-section={s.id} aria-current={isOn(s.href) ? 'page' : undefined}>
+            {s.label}<em>{s.note}</em>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
+
+<script>
+  /* Scroll-spy for the one-page descent: mark whichever section owns the
+     viewport, and keep the rail scrolled so the active link stays visible. */
+  function spy() {
+    const rail = document.querySelector('.sections');
+    const links = [...document.querySelectorAll('.sections a[data-section]')];
+    const targets = links
+      .map((a) => document.getElementById(a.dataset.section))
+      .filter(Boolean);
+    if (!rail || targets.length < 2) return;
+
+    let current = null;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          const id = e.target.id;
+          if (id === current) return;
+          current = id;
+          links.forEach((a) => {
+            const on = a.dataset.section === id;
+            if (on) a.setAttribute('aria-current', 'page');
+            else a.removeAttribute('aria-current');
+            if (on && rail.scrollWidth > rail.clientWidth) {
+              rail.scrollTo({ left: Math.max(0, a.offsetLeft - 90), behavior: 'smooth' });
+            }
+          });
+        });
+      },
+      { rootMargin: '-22% 0px -62% 0px' }
+    );
+    targets.forEach((t) => io.observe(t));
+  }
+
+  document.addEventListener('astro:page-load', spy);
+</script>

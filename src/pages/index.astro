@@ -1,0 +1,87 @@
+---
+import World from '../layouts/World.astro';
+import { me } from '../data/site';
+
+const glance = [
+  ['8+',   'Production microservices owned'],
+  ['140×', 'Speedup shipped on cached context'],
+  ['6',    'Systems built and running'],
+  ['4',    'Countries walked through'],
+];
+---
+
+<World title="Surface" world="surface" mode="axis" depth={0}>
+  <!-- ============ above the waterline ============ -->
+  <section class="air">
+    <div class="air-inner">
+      <div class="coord" data-rise>+ air &middot; keep scrolling up</div>
+      <h2 class="air-title" data-rise style="--rd:60ms">
+        Up here it's<br /><em>photographs and weather.</em>
+      </h2>
+      <p class="air-blurb" data-rise style="--rd:120ms">
+        The personal half — who I am away from the CV, and six cities I have
+        walked around with a camera.
+      </p>
+      <a class="link" href="/about/" data-rise style="--rd:180ms">Surface for air <span>↑</span></a>
+    </div>
+  </section>
+
+  <!-- ============ the waterline ============ -->
+  <section class="surface" id="waterline">
+    <div class="coord">0 m &middot; the waterline<span class="geo"> &middot; {me.coords}</span></div>
+
+    <h1 class="display">
+      Most of the work is<br /><em>below the line.</em>
+    </h1>
+
+    <div class="who">
+      <span>{me.name}</span><i>/</i>
+      <span>{me.role}</span><i>/</i>
+      <span>{me.company}</span><i>/</i>
+      <span>{me.city}</span>
+    </div>
+
+    <p class="blurb">
+      I build multi-agent systems for precision oncology. The failure mode here isn't
+      a bad demo — it's a cancer patient's copilot getting something wrong. So I spend
+      my time where the light doesn't reach: context budgets, retrieval, and the
+      unglamorous infrastructure nobody writes papers about.
+    </p>
+
+    <div class="pick">
+      <span>Pick a direction</span>
+      <a href="/deep/"><i>↓</i> Descend into the work</a>
+      <a href="/about/" class="warm"><i>↑</i> Surface for air</a>
+    </div>
+
+    <div class="axis-hint" aria-hidden="true">
+      <span class="ah-up">↑ air</span>
+      <span class="ah-rail"></span>
+      <span class="ah-down">↓ the deep</span>
+    </div>
+  </section>
+
+  <!-- ============ below the waterline ============ -->
+  <section class="sink">
+    <div class="sink-inner">
+      <div class="coord" data-rise>&minus; the deep &middot; keep scrolling down</div>
+      <h2 class="air-title" data-rise style="--rd:60ms">
+        Down here it's<br /><em>systems that must not fail.</em>
+      </h2>
+      <p class="air-blurb" data-rise style="--rd:120ms">
+        Six production systems, independent research into how agents bargain for
+        compute, four years of getting deeper, and a way to reach me at the bottom.
+      </p>
+      <a class="link" href="/deep/" data-rise style="--rd:180ms">Descend <span>↓</span></a>
+    </div>
+  </section>
+
+  <section class="glance">
+    {glance.map(([n, k], i) => (
+      <div data-rise style={`--rd:${i * 80}ms`}>
+        <div class="n">{n}</div>
+        <div class="k">{k}</div>
+      </div>
+    ))}
+  </section>
+</World>

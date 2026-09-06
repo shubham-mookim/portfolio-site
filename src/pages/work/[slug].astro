@@ -1,0 +1,72 @@
+---
+import World from '../../layouts/World.astro';
+import { projects } from '../../data/projects';
+
+export function getStaticPaths() {
+  return projects.map((p, i) => ({
+    params: { slug: p.slug },
+    props: {
+      p,
+      prev: projects[(i - 1 + projects.length) % projects.length],
+      next: projects[(i + 1) % projects.length],
+    },
+  }));
+}
+
+const { p, prev, next } = Astro.props;
+---
+
+<World
+  title={p.name}
+  description={p.blurb}
+  world="below"
+  depth={0.55}
+  drift={0.35}
+>
+  <article class="page">
+    <div class="label" data-rise>{p.status} &middot; {p.year} &middot; {p.depth}</div>
+    <h1 class="page-title" data-rise style="--rd:70ms">{p.name}</h1>
+    <p class="lede" data-rise style="--rd:140ms">{p.blurb}</p>
+
+    <div class="hero-metric" data-rise style="--rd:210ms">
+      <b>{p.metric}</b><span>{p.metricLabel}</span>
+    </div>
+  </article>
+
+  <section class="band">
+    <div class="split">
+      <div data-rise>
+        <div class="label">The problem</div>
+      </div>
+      <p class="lede" data-rise style="--rd:90ms">
+        {p.problem}
+      </p>
+    </div>
+  </section>
+
+  <section class="band tight">
+    <div class="label" data-rise>What it actually does</div>
+    <div class="proof">
+      {p.points.map((pt, i) => (
+        <div data-rise style={`--rd:${(i % 3) * 100}ms`}>
+          <div class="n">{String(i + 1).padStart(2, '0')}</div>
+          <h4>{pt.head}</h4>
+          <p>{pt.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="band tight">
+    <div class="label" data-rise>Built with</div>
+    <div class="tags" data-rise>
+      {p.stack.map((s) => <span>{s}</span>)}
+    </div>
+  </section>
+
+  <nav class="pager">
+    <a href={`/work/${prev.slug}/`}>← {prev.name}</a>
+    <a href="/deep/#specimens">All specimens</a>
+    <a href={`/work/${next.slug}/`}>{next.name} →</a>
+  </nav>
+</World>

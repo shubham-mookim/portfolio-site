@@ -1,0 +1,63 @@
+---
+/* Live model of the bilateral compute market. Honest about what it is. */
+const tiers = [
+  { id: 'rule', name: 'Rule-based', note: 'opens firm, will not move' },
+  { id: 'rl',   name: 'Q-learning', note: 'concedes moderately' },
+  { id: 'llm',  name: 'LLM',        note: 'opens wide, concedes fast' },
+];
+---
+
+<figure class="sim" data-sim>
+  <figcaption class="sim-head">
+    <span class="label" style="margin:0">Live · bilateral market</span>
+    <span class="sim-ctrl">
+      <button type="button" data-toggle>Pause</button>
+      <button type="button" data-reset>Reset</button>
+    </span>
+  </figcaption>
+
+  <div class="sim-stage">
+    <canvas aria-hidden="true"></canvas>
+  </div>
+
+  <div class="sim-read">
+    <div>
+      <span class="sim-n" data-deals>0</span>
+      <span class="sim-k">rounds settled</span>
+    </div>
+    <div>
+      <span class="sim-n" data-deadlocks>0%</span>
+      <span class="sim-k">ended in deadlock</span>
+    </div>
+  </div>
+
+  <div class="sim-bars">
+    {tiers.map((t) => (
+      <div class="sim-bar" data-tier={t.id}>
+        <span class="sim-bar-k">{t.name}<em>{t.note}</em></span>
+        <span class="sim-bar-track"><i data-bar={t.id}></i></span>
+        <span class="sim-bar-v" data-val={t.id}>0.0</span>
+      </div>
+    ))}
+  </div>
+
+  <p class="sim-note">
+    Mean surplus per tier. Give it twenty seconds and the agent that refuses to
+    concede settles ahead of both smarter tiers — the shape of finding F2, falling
+    straight out of the rules. The market runs faster than the animation: each
+    visible bargain is one sampled round of twelve. Treat this as the mechanism,
+    not a reproduction — the paper's full strategy matrix deadlocks far more often
+    than this nine-agent toy does.
+  </p>
+</figure>
+
+<script>
+  import { initNegotiation } from '../scripts/negotiation.js';
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll('[data-sim]').forEach((n) => {
+      if (n.dataset.wired) return;
+      n.dataset.wired = '1';
+      initNegotiation(n);
+    });
+  });
+</script>

@@ -1,2 +1,6 @@
+node_modules/
+dist/
+.astro/
 host/run/
 host/logs/
+.DS_Store

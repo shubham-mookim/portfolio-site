@@ -1,0 +1,87 @@
+---
+import World from '../../layouts/World.astro';
+import Negotiation from '../../components/Negotiation.astro';
+import { research } from '../../data/research';
+
+export function getStaticPaths() {
+  return research.map((r) => ({ params: { slug: r.slug }, props: { r } }));
+}
+const { r } = Astro.props;
+---
+
+<World
+  title={r.title}
+  description={`${r.question} ${r.answer} — ${r.lede}`}
+  world="below"
+  depth={0.42}
+  drift={0.4}
+>
+  <article class="page">
+    <div class="label" data-rise>Research &middot; {r.status} &middot; {r.when}</div>
+    <h1 class="page-title" data-rise style="--rd:70ms">{r.title}</h1>
+
+    <div class="ask" data-rise style="--rd:130ms">
+      <span class="ask-q">{r.question}</span>
+      <span class="ask-a">{r.answer}</span>
+    </div>
+
+    <p class="lede" data-rise style="margin-top:26px;--rd:190ms">{r.lede}</p>
+
+    <div class="glance" style="padding:34px 0 0" data-rise>
+      {r.stats.map((s) => (
+        <div><div class="n">{s.n}</div><div class="k">{s.k}</div></div>
+      ))}
+    </div>
+  </article>
+
+  <section class="band tight">
+    <div class="split">
+      <div data-rise><div class="label">Why it matters</div></div>
+      <div>{r.why.map((t, i) => <p data-rise style={`--rd:${i * 80}ms`}>{t}</p>)}</div>
+    </div>
+  </section>
+
+  <section class="band tight">
+    <div class="label" data-rise>See it happen</div>
+    <div class="sim-wrap wide" data-rise><Negotiation /></div>
+  </section>
+
+  <section class="band tight">
+    <div class="label" data-rise>Findings</div>
+    <div class="proof">
+      {r.findings.map((f, i) => (
+        <div data-rise style={`--rd:${(i % 3) * 90}ms`}>
+          <div class="n">{f.id}</div>
+          <h4>{f.head}</h4>
+          <p>{f.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="band tight">
+    <div class="two-col">
+      <div>
+        <div class="label" data-rise>What came out of it</div>
+        <div class="now-list">
+          {r.outputs.map((o) => (
+            <div class="now-row" data-rise>
+              <div class="k">{o.k}</div>
+              <p>{o.v}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div>
+        <div class="label" data-rise>Built with</div>
+        <div class="tags" data-rise>{r.stack.map((s) => <span>{s}</span>)}</div>
+      </div>
+    </div>
+  </section>
+
+  <nav class="pager">
+    <a href="/deep/#research">← All research</a>
+    <a href="/deep/">The deep</a>
+    <a href="/deep/#abyss">Get in touch →</a>
+  </nav>
+</World>

@@ -1,0 +1,49 @@
+# Build the site on every push to main and publish the output to the `live`
+# branch. The phone never runs a build — it just pulls `live` and serves it.
+name: Build site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-live
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      # keeps GitHub Pages from mangling the output if it is ever enabled
+      - run: touch dist/.nojekyll
+
+      # publish dist/ as a fresh orphan commit on `live` — plain git, no
+      # third-party action in the deploy path
+      - name: Publish to the live branch
+        run: |
+          set -eu
+          cd dist
+          git init -q
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q -b live
+          git add -A
+          git commit -q -m "build: ${GITHUB_SHA::7}"
+          git push -q --force \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" live
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
